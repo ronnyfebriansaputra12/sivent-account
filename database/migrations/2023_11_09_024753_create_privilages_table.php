@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('add')->default(0);
             $table->integer('edit')->default(0);
             $table->integer('delete')->default(0);
+            $table->integer('other')->default(0);
             $table->timestamps();
         });
     }

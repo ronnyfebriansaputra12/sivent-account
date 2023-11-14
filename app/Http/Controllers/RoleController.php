@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RoleController extends Controller
 {
@@ -14,17 +15,11 @@ class RoleController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $role = Role::with('admins')->get();
+        if (count($role) > 0) {
+            return $this->status('Data Found', true, $role);
+        }
+        return $this->status('Data Not Found', false);
     }
 
     /**
@@ -35,19 +30,23 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data =  $request->all();
+        $validate = Validator::make($data, [
+            'nama_role' => 'required|unique:roles',
+            'deskripsi' => 'required'
+        ]);
+
+        if ($validate->fails()) {
+            return $this->status($validate->getMessageBag()->first(), false);
+        }
+
+        $create = Role::create($data);
+        if ($create) {
+            return $this->status('Data Created', true, $data);
+        }
+        return $this->status('Data doesnt created', false);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Role  $role
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Role $role)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -55,9 +54,13 @@ class RoleController extends Controller
      * @param  \App\Models\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function edit(Role $role)
+    public function edit(Role $role, $id)
     {
-        //
+        $data = Role::where('id', $id)->first();
+        if (empty($data)) {
+            return $this->status('Data Not Found', false);
+        }
+        return $this->status('Data Found', true, $data);
     }
 
     /**
@@ -67,9 +70,23 @@ class RoleController extends Controller
      * @param  \App\Models\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Role $role)
+    public function update(Request $request, Role $role, $id)
     {
-        //
+        $data =  $request->all();
+        $validate = Validator::make($data, [
+            'nama_role' => 'required',
+            'deskripsi' => 'required'
+        ]);
+
+        if ($validate->fails()) {
+            return $this->status($validate->getMessageBag()->first(), false);
+        }
+
+        $update = Role::where('id', $id)->update($data);
+        if ($update) {
+            return $this->status('Data Updated', true, $data);
+        }
+        return $this->status('Data doesnt updated', false);
     }
 
     /**
@@ -78,8 +95,12 @@ class RoleController extends Controller
      * @param  \App\Models\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Role $role)
+    public function destroy(Request $request)
     {
-        //
+        $delete = Role::where('id', $request->id)->delete();
+        if ($delete) {
+            return $this->status('Data Deleted', true);
+        }
+        return $this->status('Data doesnt deleted', false);
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Admin;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
@@ -14,18 +16,13 @@ class AdminController extends Controller
      */
     public function index()
     {
-        //
+        $admin = Admin::with('role')->get();
+        if (count($admin) > 0) {
+            return $this->status('Data Found', true, $admin);
+        }
+        return $this->status('Data Not Found', false);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -35,7 +32,26 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        $validate = Validator::make($data, [
+            'nama' => 'required',
+            'email' => 'required|email',
+            'password' => 'required',
+            'contact' => 'required',
+            'role_id' => 'required'
+        ]);
+
+        if ($validate->fails()) {
+            return $this->status($validate->getMessageBag()->first(), false);
+        }
+        
+        $data['password'] = Hash::make($request->password);
+
+        $create = Admin::create($data);
+        if ($create) {
+            return $this->status('Data Created', true, $data);
+        }
+        return $this->status('Data doesnt created', false);
     }
 
     /**

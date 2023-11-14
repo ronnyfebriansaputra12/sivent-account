@@ -17,7 +17,7 @@ class Controller extends BaseController
         return $array;
     }
 
-    function generateToken($data=[])
+    function generateToken($data = [])
     {
         $key = env('APP_KEY');
         $payload = [
@@ -26,6 +26,8 @@ class Controller extends BaseController
             'data' => $data,
         ];
 
-        return JWT::encode($payload,$key);
+        $algorithm = 'HS256';
+
+        return JWT::encode($payload, $key, $algorithm);
     }
 }

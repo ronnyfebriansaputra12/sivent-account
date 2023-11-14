@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Privilage;
+use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PrivilageController extends Controller
 {
@@ -14,18 +16,13 @@ class PrivilageController extends Controller
      */
     public function index()
     {
-        //
+        $privilage = Privilage::with('role', 'menu')->get();
+        if (count($privilage) > 0) {
+            return $this->status('Data Found', true, $privilage);
+        }
+        return $this->status('Data not found', false);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -35,18 +32,26 @@ class PrivilageController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $data = $request->all();
+        $validate = Validator::make($data, [
+            'role_id' => 'required',
+            'menu_id' => 'required',
+            'view' => 'required',
+            'add' => 'required',
+            'edit' => 'required',
+            'delete' => 'required',
+            'other' => 'required'
+        ]);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Privilage  $privilage
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Privilage $privilage)
-    {
-        //
+        if ($validate->fails()) {
+            return $this->status($validate->getMessageBag()->first(), false);
+        }
+
+        $create = Privilage::create($data);
+        if ($create) {
+            return $this->status('Data Created', true, $data);
+        }
+        return $this->status('Data doesnt created', false);
     }
 
     /**
@@ -55,9 +60,13 @@ class PrivilageController extends Controller
      * @param  \App\Models\Privilage  $privilage
      * @return \Illuminate\Http\Response
      */
-    public function edit(Privilage $privilage)
+    public function edit(Privilage $privilage, $id)
     {
-        //
+        $privilage = Privilage::where('id', $id)->first();
+        if (!empty($privilage)) {
+            return $this->status('Data Found', true, $privilage);
+        }
+        return $this->status('Data not found', false);
     }
 
     /**
@@ -67,9 +76,28 @@ class PrivilageController extends Controller
      * @param  \App\Models\Privilage  $privilage
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Privilage $privilage)
+    public function update(Request $request, Privilage $privilage, $id)
     {
-        //
+        $data = $request->all();
+        $validate = Validator::make($data, [
+            'role_id' => 'required',
+            'menu_id' => 'required',
+            'view' => 'required',
+            'add' => 'required',
+            'edit' => 'required',
+            'delete' => 'required',
+            'other' => 'required'
+        ]);
+
+        if ($validate->fails()) {
+            return $this->status($validate->getMessageBag()->first(), false);
+        }
+
+        $update = Privilage::where('id', $id)->update($data);
+        if ($update) {
+            return $this->status('Data Updated', true, $data);
+        }
+        return $this->status('Data doesnt update', false);
     }
 
     /**
@@ -78,8 +106,12 @@ class PrivilageController extends Controller
      * @param  \App\Models\Privilage  $privilage
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Privilage $privilage)
+    public function destroy(Request $request)
     {
-        //
+        $delete = Privilage::where('id', $request->id)->delete();
+        if ($delete) {
+            return $this->status('Data Deleted', true);
+        }
+        return $this->status('Data doesnt deleted', false);
     }
 }

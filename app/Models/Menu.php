@@ -7,12 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class Menu extends Model
 {
     protected $fillable = [
-        'nama_menu','url','group_menu_id'
+        'nama_menu', 'url', 'group_menu_id'
     ];
 
     protected $tables = 'menus';
 
-    function groupMenu() {
+    function groupMenu()
+    {
         return $this->belongsTo(GroupMenu::class, 'group_menu_id', 'id');
+    }
+
+    function privilage()
+    {
+        return $this->hasMany(Privilage::class);
     }
 }
