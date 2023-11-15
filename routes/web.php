@@ -18,7 +18,8 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->post('/loginAdmin', 'AuthController@loginAdmin');
+$router->post('/login', 'AuthController@login');
+$router->post('/pengunjung/register', 'AuthController@registerPengunjung');
 
 $router->group(['prefix' => 'group-menu'], function () use($router) {
     $router->get('/', 'GroupMenuController@index');
@@ -58,4 +59,20 @@ $router->group(['prefix' => 'privilage'], function () use($router) {
     $router->get('/edit/{id}', 'PrivilageController@edit');
     $router->put('/update/{id}', 'PrivilageController@update');
     $router->delete('/delete', 'PrivilageController@destroy');
+});
+
+$router->group(['prefix' => 'penyelenggara'], function () use($router) {
+    $router->get('/', 'PenyelenggaraController@index');
+    $router->post('/add', 'PenyelenggaraController@store');
+    $router->get('/edit/{id}', 'PenyelenggaraController@edit');
+    $router->put('/update/{id}', 'PenyelenggaraController@update');
+    $router->delete('/delete', 'PenyelenggaraController@destroy');
+});
+
+$router->group(['prefix' => 'pengunjung'], function () use($router) {
+    $router->get('/', 'PengunjungController@index');
+    $router->post('/add', 'PengunjungController@store');
+    $router->get('/edit/{id}', 'PengunjungController@edit');
+    $router->put('/update/{id}', 'PengunjungController@update');
+    $router->delete('/delete', 'PengunjungController@destroy');
 });

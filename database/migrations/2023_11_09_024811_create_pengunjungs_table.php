@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('pengunjungs', function (Blueprint $table) {
             $table->id();
             $table->string('nama_pengunjung')->default('');
-            $table->string('email_pengunjung')->default('')->unique();
+            $table->string('email')->default('')->unique();
             $table->string('username_pengunjung')->default('')->unique();
-            $table->string('password_pengunjung')->default();
+            $table->string('password')->default();
             $table->string('contact_pengunjung')->default('');
+            $table->unsignedBigInteger('role_id');
             $table->timestamps();
         });
     }

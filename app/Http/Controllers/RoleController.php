@@ -15,7 +15,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $role = Role::with('admins')->get();
+        $role = Role::with('admins','penyelenggara')->get();
         if (count($role) > 0) {
             return $this->status('Data Found', true, $role);
         }

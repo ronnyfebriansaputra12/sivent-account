@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('penyelenggaras', function (Blueprint $table) {
             $table->id();
             $table->string('nama_penyelenggara')->default('');
-            $table->string('email_penyelenggara')->default('')->unique();
+            $table->string('email')->default('')->unique();
             $table->string('username_penyelenggara')->default('')->unique();
-            $table->string('password_penyelenggara')->default();
+            $table->string('password')->default();
             $table->string('contact_penyelenggara')->default('');
+            $table->unsignedBigInteger('role_id');
             $table->timestamps();
         });
     }

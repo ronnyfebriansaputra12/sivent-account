@@ -15,6 +15,11 @@ class Role extends Model
         return $this->hasMany(Admin::class);
     }
 
+    function penyelenggara()
+    {
+        return $this->hasMany(Penyelenggara::class);
+    }
+
     function privilage()
     {
         return $this->hasMany(Privilage::class);
